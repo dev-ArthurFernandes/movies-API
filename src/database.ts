@@ -1,0 +1,17 @@
+import { Client } from "pg";
+
+
+const client: Client = new Client({
+    user: "postgres",
+    password: "addagio244",
+    host: "localhost",
+    database: "movies",
+    port: 5432
+})
+
+const startDataBase = async () => {
+    await client.connect()
+    console.log("DataBase connected!")
+}
+
+export { client, startDataBase}
