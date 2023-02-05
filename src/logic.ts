@@ -16,4 +16,15 @@ const readMovies = async (request: Request, response: Response): Promise<Respons
     return response.status(200).json(queryResult.rows)
 }
 
+const createMovie = async (request: Request, resopnse: Response): Promise<Response> => {
+
+    const query: string = `
+        INSERT INTO
+            mymovies(%I)
+        VALUES(%L)
+    `
+
+    
+}
+
 export { readMovies }
