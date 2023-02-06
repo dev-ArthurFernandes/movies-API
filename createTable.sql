@@ -1,11 +1,11 @@
 CREATE DATABASE movies;
 
-CREATE TABLE IF NOT EXIST my_movies(
+CREATE TABLE IF NOT EXIST mymovies(
     id BIGSIREAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(100) NOT NULL,
-    duration DECIMAL(2,1) NOT NULL,
-    price DECIMAL(3,2) NOT NULL
+    duration NUMERIC(2,1) NOT NULL,
+    price NUMERIC(3,2) NOT NULL
 );
 
 

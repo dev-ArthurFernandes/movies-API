@@ -1,3 +1,5 @@
+import { QueryResult } from "pg";
+
 interface iRequestMovie{
     name: string,
     duration: number,
@@ -8,3 +10,9 @@ interface iRequestMovie{
 interface iQueryRequest extends iRequestMovie{
     id: number
 }
+
+type requiredRequestKeys = 'name' | 'duration' | 'description' | 'price'
+
+type queryResult = QueryResult<iQueryRequest>
+
+export { iRequestMovie, iQueryRequest, requiredRequestKeys, queryResult }
