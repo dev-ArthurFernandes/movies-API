@@ -1,29 +1,50 @@
 import { Request, Response } from "express";
 import { QueryConfig } from "pg";
-import format from "pg-format";
+import format, { string } from "pg-format";
 import { client } from "./database";
 import { queryResult } from "./interfaces";
 
+function isNumber(n: any) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
 const readMovies = async (request: Request, response: Response): Promise<Response> => {
 
-    const query: string = `
+    let page: any = !isNumber(request.query.page) ? 1 : request.query.page
+    let perPage: any = !isNumber(request.query.perPage) ? 5 : request.query.perPage
+    
+    const nextPage: number = + page + 1
+
+    const previousPage: number | null = page === 1 ? null : page - 1
+
+    const queryString: string = `
         SELECT
             *
         FROM
-            mymovies;
+            movies
+        LIMIT $1 OFFSET $2;
     `
 
-    const queryResult: queryResult = await client.query(query)
-    console.log(queryResult)
+    const queryConfig: QueryConfig ={ 
+        text: queryString,
+        values: [perPage, page]
+    }
 
-    return response.status(200).json(queryResult.rows)
+    const queryResult: queryResult = await client.query(queryConfig)
+
+    return response.status(200).json({
+        "previousPage": previousPage,
+        "nextPage": `http://localhost:3000/movies?page=${nextPage}&perPage=${perPage}`,
+        "count": perPage,
+        "data": queryResult.rows
+    })
 }
 
 const createMovie = async (request: Request, response: Response): Promise<Response> => {
 
     const query: string = format(`
             INSERT INTO
-                mymovies(%I)
+                movies(%I)
             VALUES
                 (%L)
             RETURNING *;
@@ -43,7 +64,7 @@ const deleteMovie = async (request: Request, response: Response): Promise<Respon
 
     const query: string = `
         DELETE FROM
-            mymovies
+            movies
         WHERE
             id = $1;
     `
@@ -61,7 +82,7 @@ const deleteMovie = async (request: Request, response: Response): Promise<Respon
         })
     }
 
-    return response.status(201).send()
+    return response.status(204).send()
 }
 
 const changeMovies = async (request: Request, response: Response): Promise<Response> => {
@@ -73,7 +94,7 @@ const changeMovies = async (request: Request, response: Response): Promise<Respo
 
     const query: string = format(`
         UPDATE
-            mymovies
+            movies
         SET(%I) = ROW(%L)
         WHERE
             id = $1
@@ -93,4 +114,4 @@ const changeMovies = async (request: Request, response: Response): Promise<Respo
     return response.status(200).json(queryResult.rows[0])
 }
 
-export { readMovies, createMovie, deleteMovie, changeMovies}
+export { readMovies, createMovie, deleteMovie, changeMovies }
