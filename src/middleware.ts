@@ -1,16 +1,17 @@
 import { NextFunction, query, Request, Response } from "express";
 import { QueryConfig } from "pg";
+import { string } from "pg-format";
 import { client } from "./database";
-import { queryResult, requiredRequestKeys } from "./interfaces";
+import { queryResult } from "./interfaces";
 
 const validateKeys = (request: Request, response: Response, next: NextFunction): Response | void => {
 
   const keys: Array<string> = Object.keys(request.body)
 
-  const requiredKeys: Array<requiredRequestKeys> = ['name','duration','description','price']
+  let requiredKeys: Array<string> = ['name','duration','price', 'description']
 
-  const checkAllKeys: boolean = requiredKeys.every((key: string) => {
-    return keys.includes(key)
+  const checkAllKeys: boolean = keys.every((key) => {
+    return requiredKeys.includes(key)
   })
 
   if(!checkAllKeys){
@@ -31,7 +32,7 @@ const validateName = async (request: Request, response: Response, next: NextFunc
     SELECT
       *
     FROM
-      mymovies
+      movies
     WHERE
       name = $1;
   `
@@ -60,7 +61,7 @@ const validateId = async (request: Request, response: Response, next: NextFuncti
     SELECT
       *
     FROM 
-      mymovies
+      movies
     WHERE
       id = $1;
   `
