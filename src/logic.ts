@@ -61,7 +61,7 @@ const deleteMovie = async (request: Request, response: Response): Promise<Respon
         })
     }
 
-    return response.status(201).send()
+    return response.status(204).send()
 }
 
 const changeMovies = async (request: Request, response: Response): Promise<Response> => {
