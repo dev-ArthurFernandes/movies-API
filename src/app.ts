@@ -9,8 +9,12 @@ app.use(express.json())
 
 app.get('/movies', readMovies)
 app.post('/movies', validateKeys, validateName, createMovie)
-app.delete('/movies/:id', validateId, deleteMovie)
+app.delete('/movies/:id', deleteMovie)
 app.patch('/movies/:id', validateId, validateName, changeMovies)
+
+process.on('uncaughtException', function (err) {
+    console.log(err);
+}); 
 
 app.listen(3000, async () => {
     await startDataBase()
